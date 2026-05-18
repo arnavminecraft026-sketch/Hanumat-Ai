@@ -259,7 +259,10 @@
     const chatArea = document.getElementById('chatArea');
     const input = document.getElementById('userInput');
 
-    function sendMessage() {
+    // Replace with your real API key
+    const API_KEY = 'PASTE_YOUR_OPENAI_API_KEY_HERE';
+
+    async function sendMessage() {
       const text = input.value.trim();
       if(text === '') return;
 
@@ -271,37 +274,61 @@
       input.value = '';
       chatArea.scrollTop = chatArea.scrollHeight;
 
-      setTimeout(() => {
+      const loading = document.createElement('div');
+      loading.className = 'message ai';
+      loading.innerText = 'HanumatAI is thinking...';
+      chatArea.appendChild(loading);
+      chatArea.scrollTop = chatArea.scrollHeight;
+
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+              {
+                role: 'system',
+                content: 'You are HanumatAI, a smart AI assistant that helps with coding, writing, AI tools, education, and creative work.'
+              },
+              {
+                role: 'user',
+                content: text
+              }
+            ],
+            temperature: 0.7,
+            max_tokens: 1000
+          })
+        });
+
+        const data = await response.json();
+
+        loading.remove();
+
         const aiMsg = document.createElement('div');
         aiMsg.className = 'message ai';
-        aiMsg.innerText = generateReply(text);
+
+        if(data.error) {
+          aiMsg.innerText = 'Error: ' + data.error.message;
+        } else {
+          aiMsg.innerText = data.choices[0].message.content;
+        }
+
         chatArea.appendChild(aiMsg);
         chatArea.scrollTop = chatArea.scrollHeight;
-      }, 800);
-    }
 
-    function generateReply(text) {
-      const lower = text.toLowerCase();
-
-      if(lower.includes('html')) {
-        return 'I can generate advanced HTML, CSS and JavaScript websites instantly.';
+      } catch (error) {
+        loading.innerText = 'Something went wrong while connecting to AI.';
       }
-
-      if(lower.includes('image')) {
-        return 'HanumatAI can create ultra realistic AI image prompts and designs.';
-      }
-
-      if(lower.includes('video')) {
-        return 'HanumatAI supports cinematic video generation prompts similar to advanced AI tools.';
-      }
-
-      return 'HanumatAI is processing your request with ultra fast AI response system.';
     }
 
     function newChat() {
       chatArea.innerHTML = `
         <div class="message ai">
-          New chat started successfully 🚀
+          Hello 👋 I am HanumatAI. Ask me anything.
         </div>
       `;
     }
@@ -311,6 +338,6 @@
         sendMessage();
       }
     });
-  </script>
+  </scr
 </body>
 </html>
