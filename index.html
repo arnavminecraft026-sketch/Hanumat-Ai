@@ -1,311 +1,300 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hanumat AI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#0d0d0d] text-white overflow-hidden font-sans">
+export default function HanumatAI() {
+  const [showAuth, setShowAuth] = React.useState(true)
+  const [isLogin, setIsLogin] = React.useState(true)
+  const [user, setUser] = React.useState(null)
+  const [formData, setFormData] = React.useState({
+    name: "",
+    email: "",
+    password: "",
+  })
 
-  <!-- LOGIN PAGE -->
-  <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl px-6">
-    <div class="w-full max-w-md bg-[#111111] border border-white/10 rounded-[35px] p-10 shadow-2xl relative overflow-hidden">
+  const handleAuth = () => {
+    const users = JSON.parse(localStorage.getItem("hanumat_users") || "[]")
 
-      <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl"></div>
+    if (isLogin) {
+      const foundUser = users.find(
+        (u) =>
+          u.email === formData.email &&
+          u.password === formData.password
+      )
 
-      <div class="relative z-10">
-        <div class="text-center mb-10">
-          <div class="w-24 h-24 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-4xl font-black text-black shadow-2xl shadow-orange-500/30">
-            H
-          </div>
+      if (foundUser) {
+        setUser(foundUser)
+        setShowAuth(false)
+      } else {
+        alert("Invalid login credentials")
+      }
+    } else {
+      const newUser = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      }
 
-          <h1 class="text-5xl font-black mt-6 bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent text-transparent">
-            HANUMAT AI
-          </h1>
+      users.push(newUser)
+      localStorage.setItem("hanumat_users", JSON.stringify(users))
 
-          <p id="authTitle" class="text-gray-400 mt-3 text-lg">
-            Login to continue
-          </p>
-        </div>
+      setUser(newUser)
+      setShowAuth(false)
+    }
+  }
 
-        <div class="space-y-5">
-          <input id="nameInput" type="text" placeholder="Full Name"
-            class="hidden w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
+  const chats = [
+    "Create a cinematic lion in fire",
+    "Generate anime style warrior",
+    "Make 4K drone video of mountains",
+    "Create futuristic city animation",
+  ]
 
-          <input id="emailInput" type="email" placeholder="Email Address"
-            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
+  return (
+    <>
+      {showAuth && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl px-6">
+          <div className="w-full max-w-md bg-[#111111] border border-white/10 rounded-[35px] p-10 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl"></div>
 
-          <input id="passwordInput" type="password" placeholder="Password"
-            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
+            <div className="relative z-10">
+              <div className="text-center mb-10">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-4xl font-black text-black shadow-2xl shadow-orange-500/30">
+                  H
+                </div>
 
-          <button onclick="handleAuth()"
-            class="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl">
-            <span id="authButton">Login</span>
-          </button>
-        </div>
+                <h1 className="text-5xl font-black mt-6 bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
+                  HANUMAT AI
+                </h1>
 
-        <div class="mt-8 text-center text-gray-400">
-          <span id="toggleText">Don't have an account?</span>
-          <button onclick="toggleMode()" id="toggleButton"
-            class="ml-2 text-orange-400 font-bold hover:text-yellow-300 transition">
-            Create Account
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+                <p className="text-gray-400 mt-3 text-lg">
+                  {isLogin
+                    ? "Login to continue"
+                    : "Create your AI account"}
+                </p>
+              </div>
 
-  <!-- MAIN WEBSITE -->
-  <div class="h-screen flex overflow-hidden">
+              <div className="space-y-5">
+                {!isLogin && (
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500 focus:border-orange-500/40"
+                  />
+                )}
 
-    <!-- SIDEBAR -->
-    <aside class="w-72 bg-black border-r border-white/10 flex flex-col justify-between">
-      <div>
-        <div class="p-6 border-b border-white/10">
-          <h1 class="text-3xl font-black bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
-            HANUMAT AI
-          </h1>
-          <p class="text-gray-400 text-sm mt-2">Advanced Creative Intelligence</p>
-        </div>
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500 focus:border-orange-500/40"
+                />
 
-        <div class="p-4">
-          <button onclick="createNewChat()" class="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-2xl">
-            + New Chat
-          </button>
-        </div>
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500 focus:border-orange-500/40"
+                />
 
-        <div id="chatHistory" class="px-3 space-y-2 overflow-y-auto h-[60vh]"></div>
-      </div>
-      </div>
+                <button
+                  onClick={handleAuth}
+                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl"
+                >
+                  {isLogin ? "Login" : "Create Account"}
+                </button>
+              </div>
 
-      <div class="p-4 border-t border-white/10">
-        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
-          <p class="font-semibold">Hanumat Pro</p>
-          <p class="text-sm text-gray-400 mt-1">
-            Unlimited AI images & cinematic videos.
-          </p>
-        </div>
-      </div>
-    </aside>
+              <div className="mt-8 text-center text-gray-400">
+                {isLogin
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
 
-    <!-- MAIN AREA -->
-    <main class="flex-1 flex flex-col relative overflow-hidden">
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="ml-2 text-orange-400 font-bold hover:text-yellow-300 transition"
+                >
+                  {isLogin ? "Create Account" : "Login"}
+                </button>
+              </div>
 
-      <!-- TOP BAR -->
-      <div class="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div>
-          <h2 class="text-2xl font-bold">Hanumat AI Chat</h2>
-          <p class="text-gray-400 text-sm">Fast AI image & video generation</p>
-        </div>
-
-        <button class="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-6 py-3 rounded-2xl font-bold hover:scale-105 transition duration-300">
-          Upgrade
-        </button>
-      </div>
-
-      <!-- BACKGROUND GLOW -->
-      <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl pointer-events-none"></div>
-
-      <!-- SIMPLE CHAT INTERFACE -->
-      <div class="px-6 pt-6 relative z-10">
-        <div class="max-w-5xl mx-auto bg-white/5 border border-white/10 rounded-3xl p-4 backdrop-blur-xl flex items-center gap-4 shadow-2xl">
-          <div class="w-12 h-12 rounded-2xl bg-gradient-to-r from-orange-500 to-yellow-400 flex items-center justify-center text-black font-black text-xl">
-            H
-          </div>
-
-          <input id="messageInput"
-            type="text"
-            placeholder="Message Hanumat AI..."
-            class="flex-1 bg-transparent outline-none text-lg text-white placeholder-gray-500"
-          />
-
-          <button onclick="sendMessage()" class="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-6 py-3 rounded-2xl font-bold hover:scale-105 transition duration-300">
-            Send
-          </button>
-        </div>
-      </div>
-
-      <!-- CHAT AREA -->
-      <div class="flex-1 overflow-y-auto px-6 py-10 relative z-10">
-        <div class="max-w-5xl mx-auto space-y-8">
-
-          <!-- WELCOME -->
-          <div class="text-center py-12">
-            <div class="w-28 h-28 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-5xl shadow-2xl shadow-orange-500/40 animate-pulse">
-              🧠
+              <div className="mt-10 p-5 rounded-2xl bg-white/5 border border-white/10">
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  User login data is securely stored locally inside the browser storage for this Hanumat AI interface.
+                </p>
+              </div>
             </div>
+          </div>
+        </div>
+      )}
 
-            <h1 class="text-6xl font-black mt-8 leading-tight">
-              Welcome to
-              <span class="block bg-gradient-to-r from-orange-400 via-yellow-300 to-red-500 bg-clip-text text-transparent">
-                Hanumat AI
-              </span>
+    <div className="h-screen bg-[#0d0d0d] text-white flex overflow-hidden font-sans">
+      {/* Sidebar */}
+      <aside className="w-72 bg-black border-r border-white/10 flex flex-col justify-between">
+        <div>
+          <div className="p-6 border-b border-white/10">
+            <h1 className="text-3xl font-black bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
+              HANUMAT AI
             </h1>
-
-            <p class="text-gray-400 text-xl mt-6 max-w-3xl mx-auto leading-relaxed">
-              Create ultra-fast AI images, cinematic videos, voiceovers, animations, thumbnails, code, and more.
+            <p className="text-gray-400 text-sm mt-2">
+              Advanced Creative Intelligence
             </p>
           </div>
 
-          <!-- USER MESSAGE -->
-          <div class="flex justify-end">
-            <div class="bg-orange-500 text-black px-6 py-5 rounded-3xl rounded-br-md max-w-2xl shadow-xl font-medium text-lg">
-              Create a futuristic cyberpunk tiger with glowing eyes in 4K
-            </div>
+          <div className="p-4">
+            <button className="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-2xl">
+              + New Chat
+            </button>
           </div>
 
-          <!-- AI RESPONSE -->
-          <div class="flex justify-start gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-r from-orange-500 to-yellow-400 flex items-center justify-center text-2xl font-bold text-black shadow-xl">
-              H
-            </div>
+          <div className="px-3 space-y-2 overflow-y-auto h-[60vh]">
+            {chats.map((chat, index) => (
+              <div
+                key={index}
+                className="p-4 rounded-2xl hover:bg-white/10 transition cursor-pointer border border-transparent hover:border-orange-500/30"
+              >
+                <p className="text-gray-300 text-sm truncate">{chat}</p>
+              </div>
+            ))}
+          </div>
+        </div>
 
-            <div class="bg-white/5 border border-white/10 px-8 py-6 rounded-3xl rounded-bl-md max-w-4xl backdrop-blur-xl shadow-2xl">
-              <h3 class="text-2xl font-bold mb-4 text-orange-400">
-                Generating Your Creation...
-              </h3>
+        <div className="p-4 border-t border-white/10">
+          <div className="bg-white/5 rounded-2xl p-4 border border-white/10">
+            <p className="font-semibold">Hanumat Pro</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Unlimited AI images & cinematic videos.
+            </p>
+          </div>
+        </div>
+      </aside>
 
-              <div class="space-y-4 text-gray-300 leading-relaxed text-lg">
-                <p>✔ Building cinematic lighting</p>
-                <p>✔ Enhancing ultra-realistic textures</p>
-                <p>✔ Applying cyberpunk atmosphere</p>
-                <p>✔ Rendering 4K AI image output</p>
+      {/* Main Chat Area */}
+      <main className="flex-1 flex flex-col relative overflow-hidden">
+        {/* Top Navbar */}
+        <div className="flex items-center justify-between px-8 py-5 border-b border-white/10 backdrop-blur-md bg-black/40">
+          <div>
+            <h2 className="text-2xl font-bold">Hanumat AI Chat</h2>
+            <p className="text-gray-400 text-sm">
+              Fast AI image, video & creative assistant
+            </p>
+          </div>
+
+          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-6 py-3 rounded-2xl font-bold hover:scale-105 transition duration-300">
+            Upgrade
+          </button>
+        </div>
+
+        {/* Background Glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl pointer-events-none"></div>
+
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-y-auto px-6 py-10 relative z-10">
+          <div className="max-w-5xl mx-auto space-y-8">
+            {/* AI Welcome */}
+            <div className="text-center py-12">
+              <div className="w-28 h-28 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-5xl shadow-2xl shadow-orange-500/40 animate-pulse">
+                🧠
               </div>
 
-              <div class="mt-8 grid md:grid-cols-2 gap-6">
-                <div class="h-56 rounded-3xl bg-gradient-to-br from-orange-500/40 to-yellow-400/20 border border-orange-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
-                  AI Image Preview
+              <h1 className="text-6xl font-black mt-8 leading-tight">
+                Welcome to
+                <span className="block bg-gradient-to-r from-orange-400 via-yellow-300 to-red-500 bg-clip-text text-transparent">
+                  Hanumat AI
+                </span>
+              </h1>
+
+              <p className="text-gray-400 text-xl mt-6 max-w-3xl mx-auto leading-relaxed">
+                Create ultra-fast AI images, cinematic videos, voiceovers,
+                animations, thumbnails, code, and more.
+              </p>
+            </div>
+
+            {/* User Prompt */}
+            <div className="flex justify-end">
+              <div className="bg-orange-500 text-black px-6 py-5 rounded-3xl rounded-br-md max-w-2xl shadow-xl font-medium text-lg">
+                Create a futuristic cyberpunk tiger with glowing eyes in 4K
+              </div>
+            </div>
+
+            {/* AI Response */}
+            <div className="flex justify-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-orange-500 to-yellow-400 flex items-center justify-center text-2xl font-bold text-black shadow-xl">
+                H
+              </div>
+
+              <div className="bg-white/5 border border-white/10 px-8 py-6 rounded-3xl rounded-bl-md max-w-4xl backdrop-blur-xl shadow-2xl">
+                <h3 className="text-2xl font-bold mb-4 text-orange-400">
+                  Generating Your Creation...
+                </h3>
+
+                <div className="space-y-4 text-gray-300 leading-relaxed text-lg">
+                  <p>✔ Building cinematic lighting</p>
+                  <p>✔ Enhancing ultra-realistic fur textures</p>
+                  <p>✔ Applying cyberpunk neon atmosphere</p>
+                  <p>✔ Rendering 4K AI image output</p>
                 </div>
 
-                <div class="h-56 rounded-3xl bg-gradient-to-br from-red-500/30 to-orange-400/20 border border-red-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
-                  Cinematic Video Preview
+                <div className="mt-8 grid md:grid-cols-2 gap-6">
+                  <div className="h-56 rounded-3xl bg-gradient-to-br from-orange-500/40 to-yellow-400/20 border border-orange-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
+                    AI Image Preview
+                  </div>
+
+                  <div className="h-56 rounded-3xl bg-gradient-to-br from-red-500/30 to-orange-400/20 border border-red-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
+                    Cinematic Video Preview
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- INPUT -->
-      <div class="p-6 border-t border-white/10 bg-black/40 backdrop-blur-xl relative z-10">
-        <div class="max-w-5xl mx-auto">
-          <div class="bg-white/5 border border-white/10 rounded-3xl p-4 flex items-center gap-4 shadow-2xl backdrop-blur-md">
-            <button class="w-14 h-14 rounded-2xl bg-white/10 hover:bg-white/20 transition text-2xl">
-              +
-            </button>
+        {/* Input Area */}
+        <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-xl relative z-10">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white/5 border border-white/10 rounded-3xl p-4 flex items-center gap-4 shadow-2xl backdrop-blur-md">
+              <button className="w-14 h-14 rounded-2xl bg-white/10 hover:bg-white/20 transition text-2xl">
+                +
+              </button>
 
-            <input type="text" placeholder="Ask Hanumat AI to create anything..."
-              class="flex-1 bg-transparent outline-none text-lg text-white placeholder-gray-500" />
+              <input
+                type="text"
+                placeholder="Ask Hanumat AI to create anything..."
+                className="flex-1 bg-transparent outline-none text-lg text-white placeholder-gray-500"
+              />
 
-            <button class="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-8 py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl">
-              Generate
-            </button>
+              <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-8 py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl">
+                Generate
+              </button>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="flex flex-wrap gap-4 mt-6">
+              {[
+                "🎨 AI Images",
+                "🎬 AI Videos",
+                "🎤 Voice AI",
+                "🖼️ Thumbnails",
+                "⚡ Animation",
+                "💻 Code Generator",
+              ].map((item, index) => (
+                <button
+                  key={index}
+                  className="px-5 py-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-orange-500/10 hover:border-orange-500/30 transition"
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-
-    </main>
-  </div>
-
-  <script>
-    let isLogin = true;
-    let chatCount = 0;
-
-    function loadChats() {
-      const history = JSON.parse(localStorage.getItem('hanumat_chat_history')) || [];
-      const container = document.getElementById('chatHistory');
-      container.innerHTML = '';
-
-      history.forEach((chat) => {
-        const div = document.createElement('div');
-        div.className = 'p-4 rounded-2xl hover:bg-white/10 transition cursor-pointer border border-white/5';
-        div.innerText = chat;
-        container.appendChild(div);
-      });
-    }
-
-    function createNewChat() {
-      chatCount++;
-
-      const newChat = {
-        id: Date.now(),
-        title: `New Chat ${chatCount}`,
-
-    function sendMessage() {
-      const input = document.getElementById('messageInput');
-      const message = input.value.trim();
-
-      if (!message) return;
-
-      let history = JSON.parse(localStorage.getItem('hanumat_chat_history')) || [];
-      history.unshift(message);
-
-      localStorage.setItem('hanumat_chat_history', JSON.stringify(history));
-
-      input.value = '';
-
-      loadChats();
-    }
-
-    window.onload = () => {
-      loadChats();
-    };
-
-    function toggleMode() {
-      isLogin = !isLogin;
-
-      document.getElementById('nameInput').classList.toggle('hidden');
-      document.getElementById('authTitle').innerText = isLogin
-        ? 'Login to continue'
-        : 'Create your AI account';
-
-      document.getElementById('authButton').innerText = isLogin
-        ? 'Login'
-        : 'Create Account';
-
-      document.getElementById('toggleText').innerText = isLogin
-        ? "Don't have an account?"
-        : 'Already have an account?';
-
-      document.getElementById('toggleButton').innerText = isLogin
-        ? 'Create Account'
-        : 'Login';
-    }
-
-    function handleAuth() {
-      const name = document.getElementById('nameInput').value;
-      const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
-
-      let users = JSON.parse(localStorage.getItem('hanumat_users')) || [];
-
-      if (isLogin) {
-        const user = users.find(
-          (u) => u.email === email && u.password === password
-        );
-
-        if (user) {
-          alert('Login Successful');
-          document.getElementById('authScreen').style.display = 'none';
-        } else {
-          alert('Invalid Email or Password');
-        }
-      } else {
-        const newUser = {
-          name,
-          email,
-          password,
-        };
-
-        users.push(newUser);
-        localStorage.setItem('hanumat_users', JSON.stringify(users));
-
-        alert('Account Created Successfully');
-        document.getElementById('authScreen').style.display = 'none';
-      }
-    }
-  </script>
-
-</body>
-</html>
+      </main>
+    </div>
+  )
+}
