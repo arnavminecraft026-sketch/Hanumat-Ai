@@ -3,260 +3,314 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hanumat AI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>HanumatAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #0b0f19;
+      color: white;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .sidebar {
+      width: 260px;
+      background: #111827;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(90deg,#ff6b00,#ffcc00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 30px;
+    }
+
+    .new-chat {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(90deg,#ff7b00,#ffb300);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 25px;
+    }
+
+    .new-chat:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(255,140,0,0.5);
+    }
+
+    .history {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .history-item {
+      padding: 12px;
+      margin-bottom: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .history-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .bottom {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #999;
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top,#141d33,#0b0f19);
+    }
+
+    .topbar {
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .profile {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(90deg,#ff7b00,#ffb300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .chat-area {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 18px;
+      border-radius: 18px;
+      line-height: 1.5;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: linear-gradient(90deg,#ff7b00,#ffb300);
+      color: white;
+    }
+
+    .ai {
+      align-self: flex-start;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .input-area {
+      padding: 20px 30px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(12px);
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      outline: none;
+      background: rgba(255,255,255,0.06);
+      color: white;
+      font-size: 15px;
+    }
+
+    .send-btn {
+      padding: 14px 24px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(90deg,#ff7b00,#ffb300);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(255,140,0,0.4);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.12);
+      border-radius: 20px;
+    }
+
+    @media(max-width: 900px) {
+      .sidebar {
+        display: none;
+      }
+
+      .message {
+        max-width: 90%;
+      }
+    }
+  </style>
 </head>
-<body class="bg-[#0d0d0d] text-white overflow-hidden font-sans">
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <div>
+        <div class="logo">HanumatAI</div>
+        <button class="new-chat" onclick="newChat()">+ New Chat</button>
 
-  <!-- LOGIN PAGE -->
-  <div id="authScreen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-xl px-6">
-    <div class="w-full max-w-md bg-[#111111] border border-white/10 rounded-[35px] p-10 shadow-2xl relative overflow-hidden">
-
-      <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl"></div>
-
-      <div class="relative z-10">
-        <div class="text-center mb-10">
-          <div class="w-24 h-24 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-4xl font-black text-black shadow-2xl shadow-orange-500/30">
-            H
-          </div>
-
-          <h1 class="text-5xl font-black mt-6 bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent text-transparent">
-            HANUMAT AI
-          </h1>
-
-          <p id="authTitle" class="text-gray-400 mt-3 text-lg">
-            Login to continue
-          </p>
+        <div class="history" id="history">
+          <div class="history-item">AI Website Idea</div>
+          <div class="history-item">Generate Coding Project</div>
+          <div class="history-item">Create Video Prompt</div>
         </div>
+      </div>
 
-        <div class="space-y-5">
-          <input id="nameInput" type="text" placeholder="Full Name"
-            class="hidden w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
+      <div class="bottom">
+        HanumatAI v1.0<br>
+        Ultra Fast AI Assistant
+      </div>
+    </div>
 
-          <input id="emailInput" type="email" placeholder="Email Address"
-            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
+    <div class="main">
+      <div class="topbar">
+        <h2>HanumatAI Chat</h2>
+        <div class="profile">H</div>
+      </div>
 
-          <input id="passwordInput" type="password" placeholder="Password"
-            class="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none text-white placeholder-gray-500" />
-
-          <button onclick="handleAuth()"
-            class="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-black text-lg hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl">
-            <span id="authButton">Login</span>
-          </button>
+      <div class="chat-area" id="chatArea">
+        <div class="message ai">
+          Hello 👋 I am HanumatAI. Ask me anything about coding, AI, images, videos, or projects.
         </div>
+      </div>
 
-        <div class="mt-8 text-center text-gray-400">
-          <span id="toggleText">Don't have an account?</span>
-          <button onclick="toggleMode()" id="toggleButton"
-            class="ml-2 text-orange-400 font-bold hover:text-yellow-300 transition">
-            Create Account
-          </button>
-        </div>
+      <div class="input-area">
+        <input type="text" id="userInput" placeholder="Ask HanumatAI anything...">
+        <button class="send-btn" onclick="sendMessage()">Send</button>
       </div>
     </div>
   </div>
 
-  <!-- MAIN WEBSITE -->
-  <div class="h-screen flex overflow-hidden">
-
-    <!-- SIDEBAR -->
-    <aside class="w-72 bg-black border-r border-white/10 flex flex-col justify-between">
-      <div>
-        <div class="p-6 border-b border-white/10">
-          <h1 class="text-3xl font-black bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">
-            HANUMAT AI
-          </h1>
-          <p class="text-gray-400 text-sm mt-2">Advanced Creative Intelligence</p>
-        </div>
-
-        <div class="p-4">
-          <button class="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-2xl">
-            + New Chat
-          </button>
-        </div>
-
-        <div class="px-3 space-y-2 overflow-y-auto h-[60vh]">
-          <div class="p-4 rounded-2xl hover:bg-white/10 transition cursor-pointer">
-            Create cinematic tiger in neon city
-          </div>
-
-          <div class="p-4 rounded-2xl hover:bg-white/10 transition cursor-pointer">
-            Generate anime warrior image
-          </div>
-
-          <div class="p-4 rounded-2xl hover:bg-white/10 transition cursor-pointer">
-            Make AI cinematic trailer
-          </div>
-        </div>
-      </div>
-
-      <div class="p-4 border-t border-white/10">
-        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
-          <p class="font-semibold">Hanumat Pro</p>
-          <p class="text-sm text-gray-400 mt-1">
-            Unlimited AI images & cinematic videos.
-          </p>
-        </div>
-      </div>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <main class="flex-1 flex flex-col relative overflow-hidden">
-
-      <!-- TOP BAR -->
-      <div class="flex items-center justify-between px-8 py-5 border-b border-white/10 bg-black/40 backdrop-blur-md">
-        <div>
-          <h2 class="text-2xl font-bold">Hanumat AI Chat</h2>
-          <p class="text-gray-400 text-sm">Fast AI image & video generation</p>
-        </div>
-
-        <button class="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-6 py-3 rounded-2xl font-bold hover:scale-105 transition duration-300">
-          Upgrade
-        </button>
-      </div>
-
-      <!-- BACKGROUND GLOW -->
-      <div class="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-red-500/5 to-yellow-500/10 blur-3xl pointer-events-none"></div>
-
-      <!-- CHAT AREA -->
-      <div class="flex-1 overflow-y-auto px-6 py-10 relative z-10">
-        <div class="max-w-5xl mx-auto space-y-8">
-
-          <!-- WELCOME -->
-          <div class="text-center py-12">
-            <div class="w-28 h-28 rounded-full bg-gradient-to-r from-orange-500 to-yellow-400 mx-auto flex items-center justify-center text-5xl shadow-2xl shadow-orange-500/40 animate-pulse">
-              🧠
-            </div>
-
-            <h1 class="text-6xl font-black mt-8 leading-tight">
-              Welcome to
-              <span class="block bg-gradient-to-r from-orange-400 via-yellow-300 to-red-500 bg-clip-text text-transparent">
-                Hanumat AI
-              </span>
-            </h1>
-
-            <p class="text-gray-400 text-xl mt-6 max-w-3xl mx-auto leading-relaxed">
-              Create ultra-fast AI images, cinematic videos, voiceovers, animations, thumbnails, code, and more.
-            </p>
-          </div>
-
-          <!-- USER MESSAGE -->
-          <div class="flex justify-end">
-            <div class="bg-orange-500 text-black px-6 py-5 rounded-3xl rounded-br-md max-w-2xl shadow-xl font-medium text-lg">
-              Create a futuristic cyberpunk tiger with glowing eyes in 4K
-            </div>
-          </div>
-
-          <!-- AI RESPONSE -->
-          <div class="flex justify-start gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-r from-orange-500 to-yellow-400 flex items-center justify-center text-2xl font-bold text-black shadow-xl">
-              H
-            </div>
-
-            <div class="bg-white/5 border border-white/10 px-8 py-6 rounded-3xl rounded-bl-md max-w-4xl backdrop-blur-xl shadow-2xl">
-              <h3 class="text-2xl font-bold mb-4 text-orange-400">
-                Generating Your Creation...
-              </h3>
-
-              <div class="space-y-4 text-gray-300 leading-relaxed text-lg">
-                <p>✔ Building cinematic lighting</p>
-                <p>✔ Enhancing ultra-realistic textures</p>
-                <p>✔ Applying cyberpunk atmosphere</p>
-                <p>✔ Rendering 4K AI image output</p>
-              </div>
-
-              <div class="mt-8 grid md:grid-cols-2 gap-6">
-                <div class="h-56 rounded-3xl bg-gradient-to-br from-orange-500/40 to-yellow-400/20 border border-orange-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
-                  AI Image Preview
-                </div>
-
-                <div class="h-56 rounded-3xl bg-gradient-to-br from-red-500/30 to-orange-400/20 border border-red-500/20 flex items-center justify-center text-gray-200 text-lg backdrop-blur-md hover:scale-105 transition duration-300">
-                  Cinematic Video Preview
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- INPUT -->
-      <div class="p-6 border-t border-white/10 bg-black/40 backdrop-blur-xl relative z-10">
-        <div class="max-w-5xl mx-auto">
-          <div class="bg-white/5 border border-white/10 rounded-3xl p-4 flex items-center gap-4 shadow-2xl backdrop-blur-md">
-            <button class="w-14 h-14 rounded-2xl bg-white/10 hover:bg-white/20 transition text-2xl">
-              +
-            </button>
-
-            <input type="text" placeholder="Ask Hanumat AI to create anything..."
-              class="flex-1 bg-transparent outline-none text-lg text-white placeholder-gray-500" />
-
-            <button class="bg-gradient-to-r from-orange-500 to-yellow-400 text-black px-8 py-4 rounded-2xl font-bold hover:scale-105 transition duration-300 shadow-orange-500/30 shadow-2xl">
-              Generate
-            </button>
-          </div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
   <script>
-    let isLogin = true;
+    const chatArea = document.getElementById('chatArea');
+    const input = document.getElementById('userInput');
 
-    function toggleMode() {
-      isLogin = !isLogin;
+    function sendMessage() {
+      const text = input.value.trim();
+      if(text === '') return;
 
-      document.getElementById('nameInput').classList.toggle('hidden');
-      document.getElementById('authTitle').innerText = isLogin
-        ? 'Login to continue'
-        : 'Create your AI account';
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.innerText = text;
+      chatArea.appendChild(userMsg);
 
-      document.getElementById('authButton').innerText = isLogin
-        ? 'Login'
-        : 'Create Account';
+      input.value = '';
+      chatArea.scrollTop = chatArea.scrollHeight;
 
-      document.getElementById('toggleText').innerText = isLogin
-        ? "Don't have an account?"
-        : 'Already have an account?';
-
-      document.getElementById('toggleButton').innerText = isLogin
-        ? 'Create Account'
-        : 'Login';
+      setTimeout(() => {
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'message ai';
+        aiMsg.innerText = generateReply(text);
+        chatArea.appendChild(aiMsg);
+        chatArea.scrollTop = chatArea.scrollHeight;
+      }, 800);
     }
 
-    function handleAuth() {
-      const name = document.getElementById('nameInput').value;
-      const email = document.getElementById('emailInput').value;
-      const password = document.getElementById('passwordInput').value;
+    function generateReply(text) {
+      const lower = text.toLowerCase();
 
-      let users = JSON.parse(localStorage.getItem('hanumat_users')) || [];
-
-      if (isLogin) {
-        const user = users.find(
-          (u) => u.email === email && u.password === password
-        );
-
-        if (user) {
-          alert('Login Successful');
-          document.getElementById('authScreen').style.display = 'none';
-        } else {
-          alert('Invalid Email or Password');
-        }
-      } else {
-        const newUser = {
-          name,
-          email,
-          password,
-        };
-
-        users.push(newUser);
-        localStorage.setItem('hanumat_users', JSON.stringify(users));
-
-        alert('Account Created Successfully');
-        document.getElementById('authScreen').style.display = 'none';
+      if(lower.includes('html')) {
+        return 'I can generate advanced HTML, CSS and JavaScript websites instantly.';
       }
-    }
-  </script>
 
+      if(lower.includes('image')) {
+        return 'HanumatAI can create ultra realistic AI image prompts and designs.';
+      }
+
+      if(lower.includes('video')) {
+        return 'HanumatAI supports cinematic video generation prompts similar to advanced AI tools.';
+      }
+
+      return 'HanumatAI is processing your request with ultra fast AI response system.';
+    }
+
+    function newChat() {
+      chatArea.innerHTML = `
+        <div class="message ai">
+          New chat started successfully 🚀
+        </div>
+      `;
+    }
+
+    input.addEventListener('keypress', function(e) {
+      if(e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
 </body>
 </html>
