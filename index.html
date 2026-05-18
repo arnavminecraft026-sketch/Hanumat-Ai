@@ -228,15 +228,9 @@
     function createNewChat() {
       chatCount++;
 
-      const newChat = `New Chat ${chatCount}`;
-
-      let history = JSON.parse(localStorage.getItem('hanumat_chat_history')) || [];
-      history.unshift(newChat);
-
-      localStorage.setItem('hanumat_chat_history', JSON.stringify(history));
-
-      loadChats();
-    }
+      const newChat = {
+        id: Date.now(),
+        title: `New Chat ${chatCount}`,
 
     function sendMessage() {
       const input = document.getElementById('messageInput');
